@@ -8,6 +8,8 @@ import (
 
 	"github.com/soydoradesu/product_discovery/internal/config"
 	"github.com/soydoradesu/product_discovery/internal/db"
+	httpapi "github.com/soydoradesu/product_discovery/internal/http"
+
 )
 
 func main() {
@@ -26,14 +28,11 @@ func main() {
 		log.Fatalf("migrate: %v", err)
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+	r := httpapi.NewRouter()
 
 	srv := &http.Server{
 		Addr: cfg.BackendAddr,
-		Handler: mux,
+		Handler: r,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout: 10 * time.Second,
 		WriteTimeout: 15 * time.Second,
