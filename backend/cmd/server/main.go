@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("migrate: %v", err)
 	}
 
-	r := httpapi.NewRouter()
+	r := httpapi.NewRouter(cfg, pool)
 
 	srv := &http.Server{
 		Addr: cfg.BackendAddr,
