@@ -47,8 +47,8 @@ type ProductSummary struct {
 type SearchParams struct {
 	Q string
 	CategoryID []int64
-	MinPrice *int64
-	MaxPrice *int64
+	MinPrice *float64
+	MaxPrice *float64
 	InStock *bool
 	Sort string
 	Method string

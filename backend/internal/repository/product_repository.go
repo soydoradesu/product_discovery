@@ -8,4 +8,5 @@ import (
 
 type ProductRepository interface {
 	GetByID(ctx context.Context, id int64) (domain.Product, error)
+	Search(ctx context.Context, params domain.SearchParams) ([]domain.ProductSummary, int64, error)
 }

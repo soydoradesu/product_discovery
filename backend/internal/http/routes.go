@@ -44,6 +44,8 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 			ar.Post("/logout", authH.Logout)
 		})
 
+		api.Get("/products/search", productH.Search)
+
 		api.With(middleware.RequireAuth(cfg)).Get("/me", authH.Me)
 		api.With(middleware.RequireAuth(cfg)).Get("/products/{id}", productH.GetByID)
 	})
