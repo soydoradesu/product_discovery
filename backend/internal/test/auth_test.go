@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/soydoradesu/product_discovery/internal/domain"
+	"github.com/soydoradesu/product_discovery/internal/repository"
 	"github.com/soydoradesu/product_discovery/internal/service"
 )
 
@@ -16,7 +17,7 @@ type fakeUsers struct {
 func (f *fakeUsers) GetByEmail(ctx context.Context, email string) (domain.User, error) {
 	u, ok := f.byEmail[email]
 	if !ok {
-		return domain.User{}, service.ErrUserNotFound
+		return domain.User{}, repository.ErrNotFound
 	}
 	return u, nil
 }
@@ -24,7 +25,7 @@ func (f *fakeUsers) GetByEmail(ctx context.Context, email string) (domain.User, 
 func (f *fakeUsers) GetByID(ctx context.Context, id int64) (domain.User, error) {
 	u, ok := f.byID[id]
 	if !ok {
-		return domain.User{}, service.ErrUserNotFound
+		return domain.User{}, repository.ErrNotFound
 	}
 	return u, nil
 }

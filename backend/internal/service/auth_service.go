@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/soydoradesu/product_discovery/internal/repository"
-	"github.com/soydoradesu/product_discovery/internal/repository/postgres"
 )
 
 type AuthService struct {
@@ -19,7 +18,7 @@ func NewAuthService(users repository.UserRepository) *AuthService {
 func (s *AuthService) Login(ctx context.Context, email, password string) (int64, error) {
 	u, err := s.Users.GetByEmail(ctx, email)
 	if err != nil {
-		if errors.Is(err, postgres.ErrNotFound) {
+		if errors.Is(err, repository.ErrNotFound) {
 			return 0, ErrUserNotFound
 		}
 		return 0, err

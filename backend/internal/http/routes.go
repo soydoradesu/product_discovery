@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 
-	"github.com/soydoradesu/product_discovery/internal/http/respond"
 	"github.com/soydoradesu/product_discovery/internal/config"
 	"github.com/soydoradesu/product_discovery/internal/http/handlers"
 	"github.com/soydoradesu/product_discovery/internal/http/middleware"
@@ -18,8 +17,13 @@ import (
 
 func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 	userRepo := postgres.NewUserRepo(pool)
+	productRepo := postgres.NewProductRepo(pool)
+
 	authSvc := service.NewAuthService(userRepo)
+	productSvc := service.NewProductService(productRepo)
+
 	authH := &handlers.AuthHandlers{Cfg: cfg, Auth: authSvc}
+	productH := &handlers.ProductHandlers{Products: productSvc}
 
 
 	r := chi.NewRouter()
@@ -33,9 +37,6 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) { 
 		w.WriteHeader(http.StatusOK) 
 	})
-	r.Get("/debug/fail", func(w http.ResponseWriter, r *http.Request) {
-    	respond.Fail(w, 400, "bad_request", "invalid input")
-	})
 
 	r.Route("/api", func(api chi.Router) {
 		api.Route("/auth", func(ar chi.Router) {
@@ -44,6 +45,7 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 		})
 
 		api.With(middleware.RequireAuth(cfg)).Get("/me", authH.Me)
+		api.With(middleware.RequireAuth(cfg)).Get("/products/{id}", productH.GetByID)
 	})
 	return r
 }

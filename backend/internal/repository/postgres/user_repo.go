@@ -10,8 +10,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var ErrNotFound = errors.New("not found")
-
 type UserRepo struct {
 	pool *pgxpool.Pool
 }
@@ -29,7 +27,7 @@ func (r *UserRepo) GetByEmail(ctx context.Context, email string) (domain.User, e
 	`, email).Scan(&u.ID, &u.Email, &u.PasswordHash, &u.GoogleID, &u.CreatedAt)
 
 	if errors.Is(err, pgx.ErrNoRows) {
-		return domain.User{}, ErrNotFound
+		return domain.User{}, repository.ErrNotFound
 	}
 	if err != nil {
 		return domain.User{}, err
@@ -46,7 +44,7 @@ func (r *UserRepo) GetByID(ctx context.Context, id int64) (domain.User, error) {
 	`, id).Scan(&u.ID, &u.Email, &u.PasswordHash, &u.GoogleID, &u.CreatedAt)
 
 	if errors.Is(err, pgx.ErrNoRows) {
-		return domain.User{}, ErrNotFound
+		return domain.User{}, repository.ErrNotFound
 	}
 	if err != nil {
 		return domain.User{}, err
