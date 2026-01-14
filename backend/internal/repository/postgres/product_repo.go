@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"regexp"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -96,10 +97,11 @@ func (r *ProductRepo) GetByID(ctx context.Context, id int64) (domain.Product, er
 
 func (r *ProductRepo) Search(ctx context.Context, params domain.SearchParams) ([]domain.ProductSummary, int64, error) {
 	q := strings.TrimSpace(params.Q)
+	tsq := buildPrefixTSQuery(q)
 
 	// $1 = q, $2 = category array
-	args := []any{q, params.CategoryID}
-	where := "WHERE ($1 = '' OR p.search_vector @@ plainto_tsquery('simple', $1))"
+	args := []any{tsq, params.CategoryID}
+	where := "WHERE ($1 = '' OR p.search_vector @@ to_tsquery('simple', $1))"
 
 	// category multi-value: match ANY selected category
 	where += `
@@ -177,7 +179,7 @@ func (r *ProductRepo) Search(ctx context.Context, params domain.SearchParams) ([
 			'[]'::jsonb
 		) AS categories_json,
 		CASE
-			WHEN $1 <> '' THEN ts_rank_cd(p.search_vector, plainto_tsquery('simple', $1))
+			WHEN $1 <> '' THEN ts_rank_cd(p.search_vector, to_tsquery('simple', $1))
 			ELSE 0
 		END AS rank
 	FROM products p
@@ -234,4 +236,23 @@ func (r *ProductRepo) Search(ctx context.Context, params domain.SearchParams) ([
 	}
 
 	return out, total, nil
+}
+
+var tsTokenRe = regexp.MustCompile(`[A-Za-z0-9]+`)
+
+func buildPrefixTSQuery(input string) string {
+	tokens := tsTokenRe.FindAllString(strings.ToLower(input), -1)
+	if len(tokens) == 0 {
+		return ""
+	}
+
+	parts := make([]string, 0, len(tokens))
+	for _, t := range tokens {
+		if t == "" {
+			continue
+		}
+		parts = append(parts, t+":*")
+	}
+
+	return strings.Join(parts, " & ")
 }
