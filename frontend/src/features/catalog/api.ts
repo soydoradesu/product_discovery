@@ -21,6 +21,23 @@ export type ProductSummary = {
     categories: ProductCategory[];
 };
 
+export type ProductImage = { 
+    url: string; 
+    position: number 
+};
+
+export type ProductDetail = {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    rating: number;
+    inStock: boolean;
+    createdAt: string;
+    images: ProductImage[];
+    categories: ProductCategory[];
+};
+
 export type SearchResponse = {
     items: ProductSummary[];
     page: number;
@@ -72,4 +89,11 @@ export async function searchProducts(params: SearchParams): Promise<SearchRespon
         `/api/products/search?${sp.toString()}`, 
         { method: "GET" }
     );
+}
+
+export async function getProductDetail(id: number): Promise<ProductDetail> {
+  return http<ProductDetail>(
+    `/api/products/${id}`, 
+    { method: "GET" }
+);
 }

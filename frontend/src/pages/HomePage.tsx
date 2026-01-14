@@ -4,7 +4,8 @@ import {
 } from "react";
 import { 
     useNavigate, 
-    useSearchParams 
+    useSearchParams,
+    useLocation,
 } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -78,6 +79,7 @@ function SkeletonGrid() {
 export function HomePage() {
     const me = useMe();
     const logout = useLogout();
+    const loc = useLocation();
     const nav = useNavigate();
 
     const [sp, setSp] = useSearchParams();
@@ -416,9 +418,16 @@ export function HomePage() {
                         ) : null}
 
                         <div className="pt-2">
-                        <Button variant="outline" size="sm" onClick={() => toast.message("Next commit: Product detail page")}>
-                            View details
-                        </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    const from = encodeURIComponent(loc.pathname + loc.search);
+                                    nav(`/products/${p.id}?from=${from}`);
+                                }}
+                            >
+                                View details
+                            </Button>
                         </div>
                     </div>
                     ))}

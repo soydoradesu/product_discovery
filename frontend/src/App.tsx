@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute.tsx";
 import { LoginPage } from "@/pages/LoginPage.tsx";
 import { HomePage } from "@/pages/HomePage.tsx";
+import { ProductDetailPage } from "@/pages/ProductDetailPage.tsx";
 
 export default function App() {
   return (
@@ -13,6 +14,15 @@ export default function App() {
         element={
           <ProtectedRoute>
             <HomePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/products/:id"
+        element={
+          <ProtectedRoute>
+            <ProductDetailPage />
           </ProtectedRoute>
         }
       />
