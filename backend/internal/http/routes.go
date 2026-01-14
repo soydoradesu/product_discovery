@@ -18,13 +18,15 @@ import (
 func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 	userRepo := postgres.NewUserRepo(pool)
 	productRepo := postgres.NewProductRepo(pool)
+	categoryRepo := postgres.NewCategoryRepo(pool)
 
 	authSvc := service.NewAuthService(userRepo)
 	productSvc := service.NewProductService(productRepo)
+	categorySvc := service.NewCategoryService(categoryRepo)
 
 	authH := &handlers.AuthHandlers{Cfg: cfg, Auth: authSvc}
 	productH := &handlers.ProductHandlers{Products: productSvc}
-
+	categoryH := &handlers.CategoryHandlers{Categories: categorySvc}
 
 	r := chi.NewRouter()
 	r.Use(chimw.RequestID)
@@ -45,6 +47,7 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 		})
 
 		api.Get("/products/search", productH.Search)
+		api.Get("/categories", categoryH.List)
 
 		api.With(middleware.RequireAuth(cfg)).Get("/me", authH.Me)
 		api.With(middleware.RequireAuth(cfg)).Get("/products/{id}", productH.GetByID)
