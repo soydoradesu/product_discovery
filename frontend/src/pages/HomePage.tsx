@@ -128,7 +128,7 @@ export function HomePage() {
 
     const catsQ = useCategories();
 
-    const searchQ = useProductSearch(normalized as any, true as any);
+    const searchQ = useProductSearch(normalized);
 
     useEffect(() => {
         if (!searchQ.isError) return;

@@ -13,7 +13,7 @@ export function useCategories() {
     });
 }
 
-export function useProductSearch(params: api.SearchParams, p0: any) {
+export function useProductSearch(params: api.SearchParams) {
     const key = [
         "productSearch",
         params.q,
