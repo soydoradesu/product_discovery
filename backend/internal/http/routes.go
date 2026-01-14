@@ -44,6 +44,9 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 		api.Route("/auth", func(ar chi.Router) {
 			ar.Post("/login", authH.Login)
 			ar.Post("/logout", authH.Logout)
+
+			ar.Get("/google/start", authH.GoogleStart)
+			ar.Get("/google/callback", authH.GoogleCallback)
 		})
 
 		api.Get("/products/search", productH.Search)

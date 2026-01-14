@@ -6,4 +6,5 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrUserNotFound = errors.New("user not found")
 	ErrProductNotFound = errors.New("product not found")
+	ErrOAuthAccountConflict = errors.New("oauth account conflict")
 )

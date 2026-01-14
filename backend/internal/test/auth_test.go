@@ -71,3 +71,40 @@ func TestAuthLogin_BadPassword(t *testing.T) {
 		t.Fatal("expected error")
 	}
 }
+
+func (f *fakeUsers) GetByGoogleID(ctx context.Context, googleID string) (domain.User, error) {
+	for _, u := range f.byEmail {
+		if u.GoogleID != nil && *u.GoogleID == googleID {
+			return u, nil
+		}
+	}
+	return domain.User{}, repository.ErrNotFound
+}
+
+func (f *fakeUsers) SetGoogleID(ctx context.Context, userID int64, googleID string) error {
+	u, ok := f.byID[userID]
+	if !ok {
+		return repository.ErrNotFound
+	}
+	u.GoogleID = &googleID
+	f.byID[userID] = u
+	// keep byEmail in sync
+	if u.Email != "" {
+		f.byEmail[u.Email] = u
+	}
+	return nil
+}
+
+func (f *fakeUsers) CreateOAuthUser(ctx context.Context, email, googleID string) (int64, error) {
+	id := int64(len(f.byID) + 1)
+	u := domain.User{ID: id, Email: email, GoogleID: &googleID}
+	if f.byEmail == nil {
+		f.byEmail = map[string]domain.User{}
+	}
+	if f.byID == nil {
+		f.byID = map[int64]domain.User{}
+	}
+	f.byEmail[email] = u
+	f.byID[id] = u
+	return id, nil
+}
