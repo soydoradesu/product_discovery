@@ -13,6 +13,9 @@ import {
 import App from "./App";
 import "./index.css";
 
+document.documentElement.classList.add("light"); 
+document.documentElement.style.colorScheme = "light"; 
+
 const qc = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

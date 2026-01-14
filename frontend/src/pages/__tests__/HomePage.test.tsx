@@ -54,10 +54,8 @@ describe("HomePage", () => {
 
   it("updates URL immediately when typing", () => {
     renderWithRoute(<HomePage />, "/");
-
-    const input = screen.getByPlaceholderText("Search name or description…");
+    const input = screen.getByTestId("search-input");
     fireEvent.change(input, { target: { value: "N" } });
-
     expect(screen.getByTestId("location").textContent).toContain("q=N");
     expect(screen.getByTestId("location").textContent).toContain("page=1");
   });
@@ -66,11 +64,9 @@ describe("HomePage", () => {
     vi.useFakeTimers();
 
     renderWithRoute(<HomePage />, "/");
-
-    const input = screen.getByPlaceholderText("Search name or description…");
+    const input = screen.getByTestId("search-input");
     fireEvent.change(input, { target: { value: "Nova" } });
 
-    // Immediately after change: debounced q should still be old value ("")
     const lastBefore = useProductSearchMock.mock.calls.at(-1)?.[0];
     expect(lastBefore.q).toBe("");
 
@@ -84,17 +80,15 @@ describe("HomePage", () => {
 
   it("changing a filter resets page=1", () => {
     renderWithRoute(<HomePage />, "/?q=Nova&page=3&pageSize=20");
-
-    const minInput = screen.getByPlaceholderText("min");
+    const minInput = screen.getByTestId("min-price-input");
     fireEvent.change(minInput, { target: { value: "100" } });
-
     expect(screen.getByTestId("location").textContent).toContain("minPrice=100");
     expect(screen.getByTestId("location").textContent).toContain("page=1");
   });
 
   it("renders empty state when items=[]", () => {
     renderWithRoute(<HomePage />, "/?q=Nova&page=1");
-    expect(screen.getByText("No results")).toBeInTheDocument();
+    expect(screen.getByText("Tidak ada hasil")).toBeInTheDocument();
   });
 
   it("renders error state when search hook errors", () => {
@@ -107,7 +101,7 @@ describe("HomePage", () => {
     }));
 
     renderWithRoute(<HomePage />, "/?q=Nova&page=1");
-    expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+    expect(screen.getByText("Terjadi kesalahan")).toBeInTheDocument();
     expect(screen.getByText("boom")).toBeInTheDocument();
   });
 });

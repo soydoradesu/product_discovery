@@ -162,7 +162,7 @@ func seedProducts(ctx context.Context, tx pgx.Tx, rng *rand.Rand, n int, categor
 		inStock := rng.Intn(100) < 70 
 		createdAt := now.Add(-time.Duration(rng.Intn(180*24)) * time.Hour)
 
-		price := 10.0 + rng.Float64()*990.0 
+		price := 10.0 + rng.Float64()*990.0 * 1000
 
 		var productID int64
 		err := tx.QueryRow(ctx, `
