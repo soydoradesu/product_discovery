@@ -27,5 +27,20 @@ services:
     ports:
       - "8080:8080"
 
+  seed:
+    build:
+      context: ./backend
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      SEED_USERS: 1000
+      SEED_PRODUCTS: 1000
+      SEED_RANDOM_SEED: 42
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["./seed"]
+    restart: "no"
+
 volumes:
   pgdata: {}
