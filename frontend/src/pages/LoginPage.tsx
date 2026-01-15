@@ -103,7 +103,7 @@ export function LoginPage() {
                 <div className="text-xs text-muted-foreground text-center">
                   Demo inquiry:{" "}
                   <span className="font-medium text-foreground">demo@example.com</span> /{" "}
-                  <span className="font-medium text-foreground">password</span>
+                  <span className="font-medium text-foreground">Password123!</span>
                 </div>
               </form>
             </CardContent>
